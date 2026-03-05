@@ -63,7 +63,7 @@ export default function Dependents() {
   const fetchData = async () => {
     setLoading(true)
     const [depsRes, empsRes] = await Promise.all([
-      supabase.from('dependents').select('*, employee:employees(ho_ten, ma_nv)').order('created_at', { ascending: false }),
+      supabase.from('dependents').select('*, employee:employees(ho_ten, ma_nv)'),
       supabase.from('employees').select('id, ho_ten, ma_nv').eq('nghi_viec', false).order('ma_nv')
     ])
     
@@ -106,11 +106,14 @@ export default function Dependents() {
     setShowModal(true)
   }
 
-  const filteredDependents = dependents.filter(dep => 
-    dep.ho_ten.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    dep.employee?.ho_ten.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    dep.employee?.ma_nv.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredDependents = dependents.filter(dep => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      (dep.ho_ten?.toLowerCase().includes(searchLower)) ||
+      (dep.employee?.ho_ten?.toLowerCase().includes(searchLower)) ||
+      (dep.employee?.ma_nv?.toLowerCase().includes(searchLower))
+    );
+  });
 
   return (
     <div className="space-y-6">
